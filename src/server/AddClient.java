@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket; 
+import java.net.Socket;
 
 public class AddClient extends Thread {
 
@@ -57,11 +57,39 @@ public class AddClient extends Thread {
             }
 
             System.out.println("Creating client...");
+
+            // This doesn't take into account the coordinates a client may have
+            // if it moved before the other clients were created. Therefore, it 
+            // is necessary to define how the initial coordinates will be 
+            // assigned to a client, as well as whether the server will keep a 
+            // record of each client's coordinates.
+            
+            JSONObject message = new JSONObject();
+            message.put("username", username);
+            message.put("command", "create");
+            message.put("class", "RemotePlayer");
+
             ClientManager client = new ClientManager(
-                    socket.getInetAddress(),socket.getPort(),
-                    username,socket, dis, dos);
+                    socket.getInetAddress(), socket.getPort(),
+                    username, socket, dis, dos);
+
+            for (ClientManager c : Server.connectedClients) {
+                JSONObject cMsg = new JSONObject();
+                cMsg.put("username", c.username);
+                cMsg.put("command", "create");
+                cMsg.put("class", "RemotePlayer");
+
+                if (!c.username.equals(client.username)) {
+                    client.queue.add(cMsg);
+                }
+            }
+
             Server.connectedClients.add(client);
+
+            Server.queue.add(message);
+
             client.start();
+
             System.out.println("Client running...");
 
         } catch (Exception e) {
