@@ -20,13 +20,16 @@ Si el inicio de sesión es exitoso
 {
     "username": "server",
     "command": "ok"
-    "mapWidth": <map width in pixels>,
-    "mapHeight": <map height in pixels>,
+    "mapWidth": <map width in tiles>,
+    "mapHeight": <map height in tiles>,
     "screenWidth": <screen width in pixels>,
     "screenHeight": <screen height in pixels>,
     "playerSpeed": <player speed>,
     "projectileSpeed": <projectile speed>,
     "map": <string with the map, nums 0 to 9>
+    "spawnX", <spawn x coord>
+    "spawnY", <spawn y coord>
+}
 ```
 
 Si el inicio de sesión falla

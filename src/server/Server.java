@@ -4,11 +4,10 @@
  */
 package server;
 
-import java.util.LinkedList;
+import java.io.*;
 import org.json.JSONObject;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import org.json.JSONTokener;
+
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentLinkedQueue; 
@@ -25,18 +24,16 @@ public class Server {
     public static ConcurrentLinkedQueue<JSONObject> queue
             = new ConcurrentLinkedQueue<>();
     public static ConcurrentLinkedQueue<ClientManager> connectedClients
-            = new ConcurrentLinkedQueue<>();
-    public static final String URL = "jdbc:mysql://localhost:3306/restordb"; //cambiar a URL de la base que usemos
-    public static final String USER = "root"; 
-    public static final String PSWD = "Win2002Racedb$"; //cambiar a contraseña de la base
+            = new ConcurrentLinkedQueue<>(); //cambiar a contraseña de la base
+    public static JSONObject config = null;
+    private static final String configFileName = "env/config.json";
 
     public static void loadDriver() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("MySQL JDBC Driver loaded!");
         } catch (ClassNotFoundException e) {
-        System.out.println("Error: No se encontró el driver de MySQL.");
-        e.printStackTrace();
+            System.err.println("Error: No se encontró el driver de MySQL." + e);
         }
     }
     
@@ -45,6 +42,28 @@ public class Server {
      */
     public static void main(String[] args) {
         System.out.println("Server starting...");
+
+        System.out.println("Reading config file...");
+
+        try (FileReader reader = new FileReader(configFileName)) {
+            JSONTokener tokenizer = new JSONTokener(reader);
+            config = new JSONObject(tokenizer);
+
+            String mapPath = config.getString("map");
+
+            System.out.println("Reading map...");
+            FileReader mapReader = new FileReader(mapPath);
+            BufferedReader br = new BufferedReader(mapReader);
+            StringBuilder map = new StringBuilder();
+            while (br.readLine() != null) {
+                map.append(br.readLine());
+            }
+            config.put("map", map.toString());
+        } catch (IOException e) {
+            System.err.println("Cannot read config file. " + e.getMessage());
+            return;
+        }
+        System.out.println("Server ready!");
 
         Thread multicastThread = new Thread(() -> {
             try {
@@ -72,9 +91,10 @@ public class Server {
                     Thread t = new AddClient(socket, dis, dos);
                     t.start();
                 } catch (Exception e) {
-                    assert socket != null;
-                    socket.close();
+                    if (socket != null)
+                        socket.close();
                     System.out.println("Server Error: " + e);
+                    break;
                 }
             }
         } catch (IOException e) {
@@ -83,9 +103,14 @@ public class Server {
 
     }
 
-    public static Boolean authenticate(String username, String password) {
+    public static String authenticate(String username, String password) {
         loadDriver();
-        try (Connection conn = DriverManager.getConnection(URL, USER, PSWD)) {
+        String msg;
+
+        try (Connection conn = DriverManager.getConnection(
+                config.getString("dbUrl"),
+                config.getString("dbUser"),
+                config.getString("dbPassword"))) {
             String query = "SELECT * FROM usuario WHERE username = ? AND password = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, username);
@@ -94,16 +119,16 @@ public class Server {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-            System.out.println("User found: " + username);
-            return true;
-        } else {
-            System.out.println("No user found.");
-            return false;
-        }
+                msg = "ok";
+            } else {
+                msg = "No user found: Wrong username or password.";
+            }
         } catch (Exception e) {
-            System.out.println("Database Error: " + e);
-            return false;
+            msg = "Database Error: " + e;
         }
+
+        System.out.println(msg);
+        return msg;
     }
 
     public static void multicast() throws InterruptedException {
