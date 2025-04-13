@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket; 
+import java.net.Socket;
 
 public class AddClient extends Thread {
 
@@ -36,22 +36,34 @@ public class AddClient extends Thread {
 
             String username = receivedJSON.get("username").toString();
             String password = receivedJSON.get("password").toString();
-            boolean ok = Server.authenticate(username, password);
+            String loginMsg = Server.authenticate(username, password);
 
             JSONObject response = new JSONObject();
             response.put("username", "server");
 
-            if (ok) {
+            if (loginMsg.equals("ok")) {
                 response.put("command", "ok");
+                String [] keys = {"mapWidth", "mapHeight", "screenWidth",
+                    "screenHeight", "playerSpeed", "projectileSpeed", "map"};
+                for (String key : keys) {
+                    response.put(key, Server.config.getString(key));
+                }
+
+                // TODO hacer una mejor manera de decidir los spawns
+                response.put("spawnX",
+                        (int) (Math.random() * Server.config.getDouble("mapWidthPx")));
+                response.put("spawnY",
+                        (int) (Math.random() * Server.config.getDouble("mapWidthPY")));
+
             } else {
                 response.put("command", "error");
-                response.put("message", "Invalid username or password");
+                response.put("message", loginMsg);
             }
 
             dos.writeUTF(response.toString());
             dos.flush();
 
-            if (!ok) {
+            if (!loginMsg.equals("ok")) {
                 closeConnection();
                 return;
             }

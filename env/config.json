@@ -1,0 +1,14 @@
+{
+        "dbUrl": "jdbc:mysql://localhost:3306/restordb",
+        "dbUser": "root",
+        "dbPassword": "Win2002Racedb$",
+        "mapWidth": 78,
+        "mapWidthPx": 3744,
+        "mapHeightPx": 2160,
+        "mapHeight": 45,
+        "screenWidth": 1248,
+        "screenHeight": 720,
+        "playerSpeed": 4,
+        "projectileSpeed": 8,
+        "map": "env/map01.txt"
+}
