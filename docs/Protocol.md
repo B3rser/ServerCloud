@@ -106,4 +106,5 @@ Otro comando especial es `died`.
     "username", <username>,
     "command", "died",
     "killer", <killer username>,
+}
 ```
