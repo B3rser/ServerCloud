@@ -6,9 +6,9 @@
 
 ```json
 {
-    "username": <username>,
+    "username": "<username>",
     "command": "login",
-    "password": <password>
+    "password": "<password>"
 }
 ```
 
@@ -19,16 +19,17 @@ Si el inicio de sesión es exitoso
 ```json
 {
     "username": "server",
-    "command": "ok"
-    "mapWidth": <map width in tiles>,
-    "mapHeight": <map height in tiles>,
-    "screenWidth": <screen width in pixels>,
-    "screenHeight": <screen height in pixels>,
-    "playerSpeed": <player speed>,
-    "projectileSpeed": <projectile speed>,
-    "map": <string with the map, nums 0 to 9>
-    "spawnX", <spawn x coord>
-    "spawnY", <spawn y coord>
+    "command": "ok",
+    "playerNum": "<player number>",
+    "mapWidth": "<map width in tiles>",
+    "mapHeight": "<map height in tiles>",
+    "screenWidth": "<screen width in pixels>",
+    "screenHeight": "<screen height in pixels>",
+    "playerSpeed": "<player speed>",
+    "projectileSpeed": "<projectile speed>",
+    "map": "<string with the map, nums 0 to 9>",
+    "spawnX": "<spawn x coordinate>",
+    "spawnY": "<spawn y coordinate>"
 }
 ```
 
@@ -38,7 +39,7 @@ Si el inicio de sesión falla
 {
     "username": "server",
     "command": "error",
-    "message": <error message>
+    "message": "<error message>"
 }
 ```
 
@@ -48,8 +49,8 @@ Todos los mensajes tienen el siguiente formato:
 
 ```json
 {
-    "username": <username>,
-    "command": <command>
+    "username": "<username>",
+    "command": "<command>"
 }
 ```
 
@@ -75,12 +76,12 @@ revivir.
 
 ```json
 {
-    "username": <username>,
+    "username": "<username>",
     "command": "spawn",
-    "x": <x coords>,
-    "y": <y coords>,
-    "numLives": <num lives>,
-    "facing": <"left", "right", "up", "down">
+    "x": "<x coords>",
+    "y": "<y coords>",
+    "numLives": "<num lives>",
+    "facing": "<'left', 'right', 'up', 'down'>"
 }
 ```
 
@@ -88,12 +89,12 @@ Cuando esto sucede, todos los clientes deben responder con su status:
 
 ```json
 {
-    "username", <username>,
+    "username": "<username>",
     "command": "status",
-    "x": <x coords>,
-    "y", <y coords>,
-    "numLives": <num lives>
-    "facing": <"left", "right", "up", "down">
+    "x": "<x coords>",
+    "y": "<y coords>",
+    "numLives": "<num lives>",
+    "facing": "<'left', 'right', 'up', 'down'>"
 }
 ```
 
@@ -103,8 +104,8 @@ Otro comando especial es `died`.
 
 ```json
 {
-    "username", <username>,
-    "command", "died",
-    "killer", <killer username>,
+    "username": "<username>",
+    "command": "died",
+    "killer": "<killer username>"
 }
 ```
