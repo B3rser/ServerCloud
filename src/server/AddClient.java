@@ -43,17 +43,19 @@ public class AddClient extends Thread {
 
             if (loginMsg.equals("ok")) {
                 response.put("command", "ok");
-                String [] keys = {"mapWidth", "mapHeight", "screenWidth",
-                    "screenHeight", "playerSpeed", "projectileSpeed", "map"};
+                String[] keys = {"mapWidth", "mapHeight", "screenWidth",
+                    "screenHeight", "playerSpeed", "projectileSpeed"};
                 for (String key : keys) {
-                    response.put(key, Server.config.getString(key));
+                    response.put(key, Server.config.getDouble(key));
                 }
+
+                response.put("map", Server.config.getString("map"));
 
                 // TODO hacer una mejor manera de decidir los spawns
                 response.put("spawnX",
                         (int) (Math.random() * Server.config.getDouble("mapWidthPx")));
                 response.put("spawnY",
-                        (int) (Math.random() * Server.config.getDouble("mapWidthPY")));
+                        (int) (Math.random() * Server.config.getDouble("mapHeightPx")));
 
             } else {
                 response.put("command", "error");
@@ -70,8 +72,8 @@ public class AddClient extends Thread {
 
             System.out.println("Creating client...");
             ClientManager client = new ClientManager(
-                    socket.getInetAddress(),socket.getPort(),
-                    username,socket, dis, dos);
+                    socket.getInetAddress(), socket.getPort(),
+                    username, socket, dis, dos);
             Server.connectedClients.add(client);
             client.start();
             System.out.println("Client running...");

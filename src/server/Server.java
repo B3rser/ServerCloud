@@ -133,7 +133,7 @@ public class Server {
 
     public static void multicast() throws InterruptedException {
         for (;;) {
-            Thread.sleep(50);
+            //Thread.sleep(50);
 
             JSONObject message = queue.poll();
 

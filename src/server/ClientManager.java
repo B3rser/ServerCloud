@@ -15,7 +15,7 @@ import java.net.InetAddress;
 public class ClientManager extends Thread {
     // Maximum number of messages in the queue before the client is
     // considered unresponsive and the connection is closed
-    private static final int MAX_QUEUED_MESSAGES = 10;
+    private static final int MAX_QUEUED_MESSAGES = 1000;
 
     private int CLIENT_STATUS;
 
@@ -97,11 +97,11 @@ public class ClientManager extends Thread {
      * */
     public void sender() throws IOException {
         for (;;) {
-            try {
+            /*try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
                 System.err.println(e);
-            }
+            }*/
 
             JSONObject message = this.queue.poll();
 
