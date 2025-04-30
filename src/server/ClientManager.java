@@ -11,8 +11,8 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.net.InetAddress;
 
-
 public class ClientManager extends Thread {
+
     // Maximum number of messages in the queue before the client is
     // considered unresponsive and the connection is closed
     private static final int MAX_QUEUED_MESSAGES = 1000;
@@ -36,8 +36,8 @@ public class ClientManager extends Thread {
     private Thread receiverThread;
 
     public ClientManager(InetAddress ip, int port, String username,
-                         Socket socket, DataInputStream dis,
-                         DataOutputStream dos) throws IOException {
+            Socket socket, DataInputStream dis,
+            DataOutputStream dos) throws IOException {
         this.ip = ip;
         this.port = port;
         this.username = username;
@@ -49,10 +49,10 @@ public class ClientManager extends Thread {
     /**
      * Client manager main method.
      *
-     * Creates two threads, one for sending and one for receiving.
-     * If either of the two threads are interrupted, the client is completely
-     * disconnected.
-     * */
+     * Creates two threads, one for sending and one for receiving. If either of
+     * the two threads are interrupted, the client is completely disconnected.
+     *
+     */
     @Override
     public void run() {
         this.senderThread = new Thread(() -> {
@@ -74,9 +74,10 @@ public class ClientManager extends Thread {
     }
 
     /**
-     * Receiver threads
-     * Receives messages and puts them in the the server messages queue.
-     * */
+     * Receiver threads Receives messages and puts them in the the server
+     * messages queue.
+     *
+     */
     public void receiver() throws IOException {
         for (;;) {
             try {
@@ -84,17 +85,18 @@ public class ClientManager extends Thread {
                 Server.queue.add(received);
                 System.out.println("Server received:\n" + received);
             } catch (JSONException e) {
-                System.err.println("Ignoring message because it has invalid " +
-                        "JSON: " + e);
+                System.err.println("Ignoring message because it has invalid "
+                        + "JSON: " + e);
             }
         }
     }
 
     /**
-     * Sender threads
-     * Picks messages from the client queue and sends them through the socket
-     * If the client queue gets too long, it disconnects the client.
-     * */
+     * Sender threads Picks messages from the client queue and sends them
+     * through the socket If the client queue gets too long, it disconnects the
+     * client.
+     *
+     */
     public void sender() throws IOException {
         for (;;) {
             /*try {
@@ -105,8 +107,9 @@ public class ClientManager extends Thread {
 
             JSONObject message = this.queue.poll();
 
-            if (message == null)
+            if (message == null) {
                 continue;
+            }
 
             if (this.queue.size() >= MAX_QUEUED_MESSAGES) {
                 throw new IOException("Client queue became too big");
@@ -147,7 +150,9 @@ public class ClientManager extends Thread {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ClientManager that)) return false;
+        if (!(o instanceof ClientManager that)) {
+            return false;
+        }
         return Objects.equals(username, that.username);
     }
 
@@ -156,4 +161,3 @@ public class ClientManager extends Thread {
         return Objects.hashCode(username);
     }
 }
-

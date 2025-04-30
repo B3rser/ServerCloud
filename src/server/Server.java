@@ -10,16 +10,18 @@ import org.json.JSONTokener;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ConcurrentLinkedQueue; 
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 /**
  *
  * @author uriel
  */
 public class Server {
+
     // Messages queue that stores the messages from all clients.
     public static ConcurrentLinkedQueue<JSONObject> queue
             = new ConcurrentLinkedQueue<>();
@@ -36,7 +38,7 @@ public class Server {
             System.err.println("Error: No se encontró el driver de MySQL." + e);
         }
     }
-    
+
     /**
      * @param args the command line arguments
      */
@@ -55,10 +57,12 @@ public class Server {
             FileReader mapReader = new FileReader(mapPath);
             BufferedReader br = new BufferedReader(mapReader);
             StringBuilder map = new StringBuilder();
-            while (br.readLine() != null) {
-                map.append(br.readLine());
+            String line;
+            while ((line = br.readLine()) != null) {
+                map.append(line);
             }
             config.put("map", map.toString());
+
         } catch (IOException e) {
             System.err.println("Cannot read config file. " + e.getMessage());
             return;
@@ -81,7 +85,7 @@ public class Server {
                 Socket socket = null;
                 try {
                     socket = serverSocket.accept();
-                    
+
                     System.out.println("A new Client is connected: " + socket);
 
                     DataInputStream dis = new DataInputStream(socket.getInputStream());
@@ -91,8 +95,9 @@ public class Server {
                     Thread t = new AddClient(socket, dis, dos);
                     t.start();
                 } catch (Exception e) {
-                    if (socket != null)
+                    if (socket != null) {
                         socket.close();
+                    }
                     System.out.println("Server Error: " + e);
                     break;
                 }
@@ -114,7 +119,7 @@ public class Server {
             String query = "SELECT * FROM usuario WHERE username = ? AND password = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, username);
-            stmt.setString(2, password); 
+            stmt.setString(2, password);
             System.out.println("Trying: " + username + " - " + password);  // DEBUG
             ResultSet rs = stmt.executeQuery();
 
@@ -151,4 +156,3 @@ public class Server {
         }
     }
 }
-
