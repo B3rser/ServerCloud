@@ -46,14 +46,14 @@ public class AddClient extends Thread {
                 String [] keys = {"mapWidth", "mapHeight", "screenWidth",
                     "screenHeight", "playerSpeed", "projectileSpeed", "map"};
                 for (String key : keys) {
-                    response.put(key, Server.config.getString(key));
+                    response.put(key, Server.config.get(key));
                 }
 
                 // TODO hacer una mejor manera de decidir los spawns
                 response.put("spawnX",
                         (int) (Math.random() * Server.config.getDouble("mapWidthPx")));
                 response.put("spawnY",
-                        (int) (Math.random() * Server.config.getDouble("mapWidthPY")));
+                        (int) (Math.random() * Server.config.getDouble("mapHeightPx")));
 
             } else {
                 response.put("command", "error");
