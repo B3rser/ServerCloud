@@ -36,7 +36,20 @@ public class AddClient extends Thread {
 
             String username = receivedJSON.get("username").toString();
             String password = receivedJSON.get("password").toString();
-            String loginMsg = Server.authenticate(username, password);
+
+            boolean isConnected = false;
+            for (ClientManager connectedClient : Server.connectedClients) {
+                if (connectedClient.username.equals(username)) {
+                    isConnected = true;
+                }
+            }
+            String loginMsg;
+
+            if (isConnected) {
+                loginMsg = "Client is already connected.";
+            } else {
+                loginMsg = Server.authenticate(username, password);
+            }
 
             JSONObject response = new JSONObject();
             response.put("username", "server");
