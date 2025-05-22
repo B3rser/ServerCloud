@@ -41,6 +41,7 @@ public class AddClient extends Thread {
             for (ClientManager connectedClient : Server.connectedClients) {
                 if (connectedClient.username.equals(username)) {
                     isConnected = true;
+                    break;
                 }
             }
             String loginMsg;
