@@ -17,8 +17,6 @@ public class ClientManager extends Thread {
     // considered unresponsive and the connection is closed
     private static final int MAX_QUEUED_MESSAGES = 1000;
 
-    private int CLIENT_STATUS;
-
     // IP address and port of the client
     // these are not being used right now, but might be used in the future.
     public InetAddress ip;
@@ -28,16 +26,16 @@ public class ClientManager extends Thread {
     public ConcurrentLinkedQueue<JSONObject> queue
             = new ConcurrentLinkedQueue<>();
     // variables required for the communication
-    private Socket socket;
-    private DataInputStream dis;
-    private DataOutputStream dos;
+    private final Socket socket;
+    private final DataInputStream dis;
+    private final DataOutputStream dos;
     // threads for communication
     private Thread senderThread;
     private Thread receiverThread;
 
     public ClientManager(InetAddress ip, int port, String username,
             Socket socket, DataInputStream dis,
-            DataOutputStream dos) throws IOException {
+            DataOutputStream dos) {
         this.ip = ip;
         this.port = port;
         this.username = username;
@@ -48,7 +46,6 @@ public class ClientManager extends Thread {
 
     /**
      * Client manager main method.
-     *
      * Creates two threads, one for sending and one for receiving. If either of
      * the two threads are interrupted, the client is completely disconnected.
      *
@@ -84,6 +81,11 @@ public class ClientManager extends Thread {
                 JSONObject received = new JSONObject(this.dis.readUTF());
                 Server.queue.add(received);
                 System.out.println("Server received:\n" + received);
+                if (received.getString("command").equals("exit")) {
+                    Server.connectedClients.remove(this);
+                    closeConnection();
+                    System.out.println("Server closed connection with " + this.ip + ":" + this.port);
+                }
             } catch (JSONException e) {
                 System.err.println("Ignoring message because it has invalid "
                         + "JSON: " + e);
