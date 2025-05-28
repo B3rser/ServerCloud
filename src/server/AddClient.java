@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class AddClient extends Thread {
+    static int clientCount = 0;
+    static boolean addingClient = false;
 
     final DataInputStream dis;
     final DataOutputStream dos;
@@ -56,7 +58,12 @@ public class AddClient extends Thread {
             response.put("username", "server");
 
             if (loginMsg.equals("ok")) {
+                while (addingClient);
+
+                addingClient = true;
+
                 response.put("command", "ok");
+                response.put("playerNum", clientCount);
                 String[] keys = {"mapWidth", "mapHeight", "screenWidth",
                     "screenHeight", "playerSpeed", "projectileSpeed"};
                 for (String key : keys) {
@@ -91,6 +98,9 @@ public class AddClient extends Thread {
             Server.connectedClients.add(client);
             client.start();
             System.out.println("Client running...");
+
+            clientCount++;
+            addingClient = false;
 
         } catch (Exception e) {
             System.out.println("Error: " + e);

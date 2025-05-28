@@ -78,6 +78,7 @@ revivir.
 {
     "username": "<username>",
     "command": "spawn",
+    "playerNum": "<playerNum>",
     "x": "<x coords>",
     "y": "<y coords>",
     "numLives": "<num lives>",
@@ -91,6 +92,7 @@ Cuando esto sucede, todos los clientes deben responder con su status:
 {
     "username": "<username>",
     "command": "status",
+    "playerNum": "<playerNum>",
     "x": "<x coords>",
     "y": "<y coords>",
     "numLives": "<num lives>",
